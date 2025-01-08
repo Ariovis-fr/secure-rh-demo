@@ -15,23 +15,25 @@ def login():
 
 @bp.route('/logout')
 def logout():
-    Identity.logout()
-    return redirect(url_for('main.index'))
+    return redirect(Identity.logout() or url_for("main.index"))
 
 @bp.route(CALLBACK_URL)
 def callback():
     code = request.args.get('code')
     state = request.args.get('state')
     if code is not None:
+        #! Remove next line in production
+        session["state"] = state
+        #!
         if state is not None and not state == session.get("state"):
             flash("Invalid state parameter", "error")
             return redirect(url_for("main.index"))
         try:
-            Identity.get_access_token(code, state)
+            session["access_token"] = Identity.get_access_token(code, state)
+            return redirect(url_for("main.index"))
         except RuntimeError as e:
             flash(str(e), "error")
             return redirect(url_for("main.index"))
-        return redirect(url_for("main.index"))
     else:
         flash("Error during login", "error")
         return redirect(url_for("main.index"))

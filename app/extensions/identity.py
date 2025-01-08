@@ -5,8 +5,7 @@ from oic.oic import Grant
 from oic import rndstr
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from config import CLIENT_ID, CLIENT_SECRET, AUTHORITY, REDIRECT_URI
-from flask import session, redirect, url_for
-from jwt import decode, InvalidTokenError
+from flask import session, redirect, url_for, flash
 from typing import Union
 import functools
 
@@ -41,9 +40,7 @@ class Identity:
         ).request(Identity.__client.authorization_endpoint)
     
     @staticmethod
-    def get_access_token(code, state=None) -> str:
-        if state is None:
-            return redirect(url_for("auth.login"))
+    def get_access_token(code, state) -> str:
 
         auth_response = AuthorizationResponse(
             code=code,
@@ -66,22 +63,31 @@ class Identity:
         if token_response.get("error"):
             raise RuntimeError(token_response["error_description"])
 
-        session["access_token"] = token_response["access_token"]
-
         return token_response["access_token"]
     
     
     @staticproperty
     def access_token() :
-        if session.get("access_token"):
+        if session.get("access_token") and session.get("state"):
             return session["access_token"]
         else:
-            session.clear()
             return None
         
     @staticmethod
     def logout():
+        if not Identity.access_token:
+            return None
+        try:
+            end_session_endpoint = Identity.__client.construct_EndSessionRequest(
+                request_args={
+                    "state": session["state"]
+                }
+            )
+        except GrantError:
+            return None
+        url = end_session_endpoint.request(Identity.__client.end_session_endpoint)
         session.clear()
+        return url
 
     @staticmethod
     def get_user_info() -> Union[dict, None]:
@@ -94,16 +100,18 @@ class Identity:
                 )
                 return user_info
             except GrantError:
-                raise InvalidTokenError("Invalid token")
+                return None
         else:
-            raise InvalidTokenError("No token available")
+            return None
         
     @staticmethod
     def middleguard(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            try:
+            user_info = Identity.get_user_info()
+            if user_info:
                 return func(*args, **kwargs, user_info=Identity.get_user_info())
-            except InvalidTokenError:
+            else:
+                flash("Unauthorized", "error")
                 return redirect(url_for("auth.login"))
         return wrapper
