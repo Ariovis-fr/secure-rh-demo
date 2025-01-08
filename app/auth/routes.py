@@ -36,11 +36,10 @@ def callback():
         flash("Error during login", "error")
         return redirect(url_for("main.index"))
 
-@Identity.middleguard
 @bp.route('/me')
-def me():
-    user_info = Identity.get_user_info()
+@Identity.middleguard
+def me(user_info=None):
     if user_info:
-        return jsonify(user_info)
+        return jsonify(user_info.to_dict())
     else:
-        return redirect(url_for("auth.login"))
+        return jsonify({"error": "No user info available"}), 500

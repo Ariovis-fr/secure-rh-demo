@@ -13,28 +13,6 @@ import functools
 class staticproperty(staticmethod):
     def __get__(self, *_):
         return self.__func__()
-    
-class token(str):
-    def __new__(cls, value):
-        return str.__new__(cls, value)
-    
-    def __init__(self, value):
-        self.value = value
-
-    def is_valid(self):
-        # check if the date is expired
-        try:
-            _ = decode(self, verify=True)
-            return True
-        except InvalidTokenError:
-            return False
-
-    def parse(self) -> dict:
-        # parse the base64 encoded token
-        return decode(self, verify=False)
-    
-    def raw(self) -> str:
-        return self.value
         
 
 class Identity:
@@ -89,21 +67,16 @@ class Identity:
             raise RuntimeError(token_response["error_description"])
 
         session["access_token"] = token_response["access_token"]
-        session["id_token"] = token_response["id_token"]
 
-        return token(token_response["access_token"])
+        return token_response["access_token"]
     
     
     @staticproperty
-    def access_token() -> token:
+    def access_token() :
         if session.get("access_token"):
-            access_token = token(session["access_token"])
-            if access_token.is_valid():
-                return access_token
-            else:
-                session.clear()
-                return None
+            return session["access_token"]
         else:
+            session.clear()
             return None
         
     @staticmethod
@@ -117,22 +90,20 @@ class Identity:
                 user_info = Identity.__client.do_user_info_request(
                     state=session["state"],
                     authn_method="client_secret_basic",
-                    token=Identity.access_token.raw()
+                    token=Identity.access_token
                 )
-                user_info.update(session["id_token"])
                 return user_info
             except GrantError:
-                return None
+                raise InvalidTokenError("Invalid token")
         else:
-            return None
+            raise InvalidTokenError("No token available")
         
     @staticmethod
     def middleguard(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            if Identity.access_token:
+            try:
                 return func(*args, **kwargs, user_info=Identity.get_user_info())
-            else:
-                print("WARNING : No access token")
+            except InvalidTokenError:
                 return redirect(url_for("auth.login"))
         return wrapper
