@@ -32,6 +32,9 @@ class token(str):
     def parse(self) -> dict:
         # parse the base64 encoded token
         return decode(self, verify=False)
+    
+    def raw(self) -> str:
+        return self.value
         
 
 class Identity:
@@ -60,24 +63,30 @@ class Identity:
         ).request(Identity.__client.authorization_endpoint)
     
     @staticmethod
-    def get_access_token(code) -> str:
-        state = session["state"]
+    def get_access_token(code, state=None) -> str:
+        if state is None:
+            return redirect(url_for("auth.login"))
 
-        response = AuthorizationResponse(
+        auth_response = AuthorizationResponse(
             code=code,
             state=state
         )
 
-        Identity.__client.grant[state] = Grant()
-        Identity.__client.grant[state].add_code(response)
+        grant = Grant()
+        grant.add_code(auth_response)
+        Identity.__client.grant[state] = grant
 
         token_response = Identity.__client.do_access_token_request(
             state=state,
             request_args={
-                "code": code
+                "code": code,
+                "redirect_uri": REDIRECT_URI
             },
             authn_method="client_secret_basic"
         )
+        
+        if token_response.get("error"):
+            raise RuntimeError(token_response["error_description"])
 
         session["access_token"] = token_response["access_token"]
         session["id_token"] = token_response["id_token"]
@@ -86,7 +95,7 @@ class Identity:
     
     
     @staticproperty
-    def access_token() -> Union[token, None]:
+    def access_token() -> token:
         if session.get("access_token"):
             access_token = token(session["access_token"])
             if access_token.is_valid():
@@ -108,7 +117,7 @@ class Identity:
                 user_info = Identity.__client.do_user_info_request(
                     state=session["state"],
                     authn_method="client_secret_basic",
-                    token=Identity.access_token
+                    token=Identity.access_token.raw()
                 )
                 user_info.update(session["id_token"])
                 return user_info
@@ -124,5 +133,6 @@ class Identity:
             if Identity.access_token:
                 return func(*args, **kwargs, user_info=Identity.get_user_info())
             else:
+                print("WARNING : No access token")
                 return redirect(url_for("auth.login"))
         return wrapper
