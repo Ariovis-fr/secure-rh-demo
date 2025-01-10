@@ -8,4 +8,7 @@
 {% if g.user %}
   <p> Hello, {{ g.user['name'] }}! </p>
 {% endif %}
+{% if g.user.organization %}
+  <p> You are a member of {{ g.user.organization[0] }} </p>
+{% endif %}
 {% endblock %}

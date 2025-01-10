@@ -4,6 +4,7 @@ from oic.oauth2.exception import GrantError
 from oic.oic import Grant
 from oic import rndstr
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from oic.exception import RequestError
 from config import CLIENT_ID, CLIENT_SECRET, AUTHORITY, REDIRECT_URI
 from flask import session, redirect, url_for, flash
 from typing import Union
@@ -32,7 +33,7 @@ class Identity:
         return Identity.__client.construct_AuthorizationRequest(
             request_args={
                 "response_type": "code",
-                "scope": ["openid", "email", "profile"],
+                "scope": ["openid", "email", "profile", "organization"],
                 "redirect_uri": REDIRECT_URI,
                 "state": session["state"],  
                 "nonce": session["nonce"]
@@ -100,6 +101,8 @@ class Identity:
                 )
                 return user_info
             except GrantError:
+                return None
+            except RequestError:
                 return None
         else:
             return None
