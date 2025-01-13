@@ -16,13 +16,13 @@ public class CustomAuthenticator implements Authenticator {
         UserModel user = context.getUser();
 
         // Log the username to the server log
-        logger.info("start authenticate themeOrgAuthenticator");
+        logger.info("start flow themeOrgAuthenticator");
         if (user == null) logger.warn("User is null");
 
         if (user != null && user.getUsername().endsWith("@org1.com")) {
-            context.getRealm().setLoginTheme("keycloak");
+            context.getRealm().setLoginTheme("org1");
         } else if (user != null && user.getUsername().endsWith("@org2.com")) {
-            context.getRealm().setLoginTheme("base");
+            context.getRealm().setLoginTheme("org2");
         }
         context.success();
     }

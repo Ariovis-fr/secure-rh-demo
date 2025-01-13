@@ -16,7 +16,7 @@ public class DefaultThemeAuthenticator implements Authenticator {
         // Log the start of the authentication flow
         logger.info("start flow defaultThemeAuthenticator");
         // Explicitly set the theme to default
-        context.getRealm().setLoginTheme("attributes");
+        context.getRealm().setLoginTheme("keycloak");
         context.success();
     }
 
