@@ -31,10 +31,17 @@ dependencies {
     implementation 'org.jboss.logging:jboss-logging:3.4.1.Final'
 }
 
+task copyThemes(type: Copy) {
+    from 'src/main/resources/themes'  // Path to the themes directory
+    into "$buildDir/resources/main/themes"  // This ensures themes are included in the JAR
+}
+
 jar {
+    dependsOn copyThemes  // Ensure the themes are copied before building the JAR
+
     manifest {
         attributes(
-            'Implementation-Title': 'Custom Authenticator',
+            'Implementation-Title': 'ThemeOrgAuthentificator',
             'Implementation-Version': '1.0',
             'Main-Class': 'com.example.CustomAuthenticator' // Optional, not needed for SPI
         )

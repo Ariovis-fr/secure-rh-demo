@@ -17,9 +17,6 @@ services:
       - "7800:7800"
     volumes:
       - ./themeOrgAuthentificator/build/libs/themeOrgAuthentificator.jar:/opt/keycloak/providers/themeOrgAuthentificator.jar:z
-      - ./realm-config:/opt/keycloak/data/import
-      - ./themes/org1/:/opt/keycloak/themes/org1/
-      - ./themes/org2/:/opt/keycloak/themes/org2/
     depends_on:
       - keycloak-x-db
     networks:

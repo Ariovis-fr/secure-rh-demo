@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 CLIENT_ID = os.getenv("OIDC_CLIENT_ID", "client_id")
 CLIENT_SECRET = os.getenv("OIDC_CLIENT_SECRET", "client_secret")

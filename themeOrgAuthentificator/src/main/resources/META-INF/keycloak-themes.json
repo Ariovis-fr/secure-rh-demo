@@ -1,0 +1,9 @@
+{
+    "themes": [{
+        "name" : "org1",
+        "types": [ "login" ]
+    }, {
+        "name" : "org2",
+        "types": [ "login" ]
+    }]
+}
