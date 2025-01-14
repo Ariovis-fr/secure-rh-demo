@@ -17,7 +17,9 @@ public class CustomAuthenticator implements Authenticator {
 
         // Log the username to the server log
         logger.info("start flow themeOrgAuthenticator");
-        if (user == null) logger.warn("User is null");
+
+        if (user == null) { logger.warn("User is null"); }
+        else { logger.info("User is: " + user.getUsername()); }
 
         if (user != null && user.getUsername().endsWith("@org1.com")) {
             context.getRealm().setLoginTheme("org1");

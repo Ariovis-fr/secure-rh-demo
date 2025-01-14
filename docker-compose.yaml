@@ -18,11 +18,13 @@ services:
     volumes:
       - ./themeOrgAuthentificator/build/libs/themeOrgAuthentificator.jar:/opt/keycloak/providers/themeOrgAuthentificator.jar:z
       - ./realm-config:/opt/keycloak/data/import
+      - ./themes/org1/:/opt/keycloak/themes/org1/
+      - ./themes/org2/:/opt/keycloak/themes/org2/
     depends_on:
       - keycloak-x-db
     networks:
       - keycloak-internal
-  keycloak-x-db:
+  keycloak-x-db: 
     image: postgres:16
     networks:
       - keycloak-internal
@@ -30,7 +32,7 @@ services:
       - "5433:5432"
     volumes:
       - x_postgres_data:/var/lib/postgresql/data
-    environment:
+    environment: 
       POSTGRES_DB: keycloak
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password

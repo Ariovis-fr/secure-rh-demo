@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Dégradé de fond -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #ff9d00; stop-opacity: 1" />
+      <stop offset="100%" style="stop-color: #ff5f00; stop-opacity: 1" />
+    </linearGradient>
+    <linearGradient id="shapeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #ffffff; stop-opacity: 1" />
+      <stop offset="100%" style="stop-color: #d1d1d1; stop-opacity: 1" />
+    </linearGradient>
+    <filter id="innerShadow">
+      <feComponentTransfer in="SourceAlpha">
+        <feFuncA type="table" tableValues="1 0" />
+      </feComponentTransfer>
+      <feGaussianBlur stdDeviation="4" />
+      <feOffset dx="2" dy="2" result="offsetblur" />
+      <feFlood flood-color="black" result="color" />
+      <feComposite in2="offsetblur" operator="in" />
+      <feComposite in2="SourceAlpha" operator="in" />
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fond avec dégradé -->
+  <rect width="200" height="200" fill="url(#bgGradient)" />
+
+  <!-- Hexagone avec dégradé -->
+  <polygon points="100,10 180,52.5 180,147.5 100,190 20,147.5 20,52.5" fill="none" stroke="white" stroke-width="4"/>
+
+  <!-- Cercle intérieur avec ombre interne -->
+  <circle cx="100" cy="100" r="80" fill="none" stroke="white" stroke-width="4" />
+
+  <!-- Cercle pointillé avec ombre -->
+  <circle cx="100" cy="100" r="75" fill="none" stroke="white" stroke-width="1" stroke-dasharray="2,4" style="filter: drop-shadow(2px 2px 3px lightgray);" />
+
+  <!-- Texte avec effet d'ombre -->
+  <text x="50%" y="110" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" fill="white" style="filter: drop-shadow(1px 1px 2px black);">
+    ORG1
+  </text>
+</svg>

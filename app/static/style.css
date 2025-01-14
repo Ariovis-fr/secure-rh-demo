@@ -2,17 +2,34 @@ nav {
   background-color: #333;
   color: white;
   padding: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav[data-organization='org2'] {
+  background-color: rgb(19, 42, 81);
+}
+
+nav[data-organization='org1'] {
+  background-color: #cf3d4f;
+}
+
+nav img {
+  height: 50px;
+  margin-right: 1em;
 }
 
 nav h1 {
   display: inline;
-  margin-right: 2em;
+  margin-right: auto;
 }
 
 nav ul {
   display: inline;
   list-style-type: none;
   padding: 0;
+  margin-left: auto;
 }
 
 nav ul li {

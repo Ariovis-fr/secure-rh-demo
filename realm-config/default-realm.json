@@ -586,11 +586,11 @@
       "attributes": {
         "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
-        "client.secret.creation.time": "1736522977",
+        "client.secret.creation.time": "1736779492",
         "backchannel.logout.session.required": "true",
         "post.logout.redirect.uris": "*",
-        "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
+        "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
@@ -1793,7 +1793,7 @@
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "smtpServer": {},
-  "loginTheme": "attributes",
+  "loginTheme": "keycloak",
   "accountTheme": "",
   "adminTheme": "",
   "emailTheme": "",
@@ -1853,13 +1853,13 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "oidc-sha256-pairwise-sub-mapper",
-            "oidc-address-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-role-list-mapper",
-            "oidc-full-name-mapper",
-            "saml-user-property-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-user-attribute-mapper"
+            "oidc-address-mapper",
+            "saml-role-list-mapper",
+            "saml-user-property-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-full-name-mapper",
+            "oidc-usermodel-attribute-mapper"
           ]
         }
       },
@@ -1879,14 +1879,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-full-name-mapper",
             "saml-user-attribute-mapper",
             "oidc-address-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-attribute-mapper",
+            "saml-user-property-mapper",
             "saml-role-list-mapper",
-            "saml-user-property-mapper"
+            "oidc-usermodel-property-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-full-name-mapper"
           ]
         }
       },
@@ -2055,6 +2055,24 @@
           "authenticatorFlow": false,
           "requirement": "ALTERNATIVE",
           "priority": 20,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        }
+      ]
+    },
+    {
+      "id": "9dff109d-da44-4cf9-aa07-1a379cfaf327",
+      "alias": "Conditional Org",
+      "description": "",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "organization",
+          "authenticatorFlow": false,
+          "requirement": "REQUIRED",
+          "priority": 0,
           "autheticatorFlow": false,
           "userSetupAllowed": false
         }
@@ -2533,6 +2551,14 @@
       "builtIn": false,
       "authenticationExecutions": [
         {
+          "authenticator": "defaultThemeAuthenticator",
+          "authenticatorFlow": false,
+          "requirement": "DISABLED",
+          "priority": 0,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        },
+        {
           "authenticator": "auth-cookie",
           "authenticatorFlow": false,
           "requirement": "ALTERNATIVE",
@@ -2567,7 +2593,7 @@
         {
           "authenticatorFlow": true,
           "requirement": "ALTERNATIVE",
-          "priority": 31,
+          "priority": 33,
           "autheticatorFlow": true,
           "flowAlias": "browser with theme switch forms",
           "userSetupAllowed": false
@@ -2594,7 +2620,7 @@
           "authenticator": "auth-otp-form",
           "authenticatorFlow": false,
           "requirement": "REQUIRED",
-          "priority": 20,
+          "priority": 21,
           "autheticatorFlow": false,
           "userSetupAllowed": false
         }
@@ -2635,7 +2661,7 @@
       "authenticationExecutions": [
         {
           "authenticatorFlow": true,
-          "requirement": "CONDITIONAL",
+          "requirement": "REQUIRED",
           "priority": 10,
           "autheticatorFlow": true,
           "flowAlias": "browser with theme switch Browser - Conditional Organization",
@@ -2655,7 +2681,7 @@
           "authenticator": "themeOrgAuthenticator",
           "authenticatorFlow": false,
           "requirement": "REQUIRED",
-          "priority": 10,
+          "priority": 20,
           "autheticatorFlow": false,
           "userSetupAllowed": false
         },
@@ -2663,14 +2689,22 @@
           "authenticator": "auth-username-password-form",
           "authenticatorFlow": false,
           "requirement": "REQUIRED",
-          "priority": 20,
+          "priority": 23,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "defaultThemeAuthenticator",
+          "authenticatorFlow": false,
+          "requirement": "REQUIRED",
+          "priority": 24,
           "autheticatorFlow": false,
           "userSetupAllowed": false
         },
         {
           "authenticatorFlow": true,
           "requirement": "CONDITIONAL",
-          "priority": 21,
+          "priority": 25,
           "autheticatorFlow": true,
           "flowAlias": "browser with theme switch Browser - Conditional OTP",
           "userSetupAllowed": false

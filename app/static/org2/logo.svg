@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Dégradé de fond -->
+  <defs>
+    <radialGradient id="backgroundGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" style="stop-color: #00d2ff; stop-opacity: 1" />
+      <stop offset="100%" style="stop-color: #3a7bd5; stop-opacity: 1" />
+    </radialGradient>
+    <linearGradient id="shapeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: white; stop-opacity: 1" />
+      <stop offset="100%" style="stop-color: lightgray; stop-opacity: 1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Fond -->
+  <rect width="200" height="200" fill="url(#backgroundGradient)" />
+
+  <!-- Carré extérieur avec effet dégradé -->
+  <rect x="30" y="30" width="140" height="140" fill="none" stroke="white" stroke-width="4" transform="rotate(45 100 100)" />
+
+  <!-- Cercle intérieur avec effet d'ombre -->
+  <circle cx="100" cy="100" r="70" fill="none" stroke="white" stroke-width="4" />
+
+  <!-- Cercle pointillé avec effet gaufré -->
+  <circle cx="100" cy="100" r="65" fill="none" stroke="white" stroke-width="1" stroke-dasharray="4,6" style="filter: drop-shadow(2px 2px 3px lightgray);" />
+
+  <!-- Texte ORG2 avec effet embossé -->
+  <text x="50%" y="110" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" fill="white" style="filter: drop-shadow(1px 1px 2px black);">
+    ORG2
+  </text>
+
+  <!-- Ombre interne -->
+  <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+    <feComponentTransfer in="SourceAlpha">
+      <feFuncA type="table" tableValues="1 0" />
+    </feComponentTransfer>
+    <feGaussianBlur stdDeviation="4" />
+    <feOffset dx="2" dy="2" result="offsetblur" />
+    <feFlood flood-color="black" result="color" />
+    <feComposite in2="offsetblur" operator="in" />
+    <feComposite in2="SourceAlpha" operator="in" />
+    <feMerge>
+      <feMergeNode />
+      <feMergeNode in="SourceGraphic" />
+    </feMerge>
+  </filter>
+</svg>

@@ -1,23 +1,27 @@
 <!doctype html>
 <title>{% block title %}{% endblock %} - Secure RH</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<nav>
-  <h1>Secure RH</h1>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<nav {% if g.user and g.user.organization %}data-organization="{{ g.user.organization[0] }}"{% endif %} class="shadow-md p-4">
+  {% if g.user.organization %}
+    <img src="{{ url_for('static', filename=g.user.organization[0] + '/logo.svg') }}" alt="logo-{{ g.user.organization[0] }}">
+  {% endif %}
+  <h1 class="text-xl font-bold">Secure RH</h1>
   <ul>
     {% if g.user %}
-      <li><span>{{ g.user['name'] }}</span>
-      <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+      <li><span>{{ g.user['name'] }}</span></li>
+      <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
     {% else %}
-      <li><a href="{{ url_for('auth.login') }}">Log In</a>
+      <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
     {% endif %}
   </ul>
 </nav>
-<section class="content">
+<section class="content py-6 px-4">
   <header>
     {% block header %}{% endblock %}
   </header>
   {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
+    <div class="flash py-6 px-4">{{ message }}</div>
   {% endfor %}
   {% block content %}{% endblock %}
 </section>

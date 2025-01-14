@@ -1,14 +1,212 @@
 {% extends 'base.html' %}
 
+{% block title %}Home{% endblock %}
+
 {% block header %}
-<h1>{% block title %} Home {% endblock %}</h1>
+<div class="py-3">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Secure RH</h1>
+</div>
 {% endblock %}
 
 {% block content %}
 {% if g.user %}
-  <p> Hello, {{ g.user['name'] }}! </p>
+  <p class="text-lg font-semibold text-blue-600">Hello, {{ g.user['name'] }}!</p>
 {% endif %}
-{% if g.user.organization %}
-  <p> You are a member of {{ g.user.organization[0] }} </p>
+<!-- Login Prompt Block: Only shown when not logged in -->
+{% if not g.user %}
+  <div class="bg-yellow-100 p-6 rounded-lg shadow-lg border border-yellow-300 mt-8">
+    <h3 class="text-xl font-semibold text-gray-800">Restricted Access</h3>
+    <p class="text-sm text-gray-600 mt-2">You must log in to access this functionality. Please log in to continue.</p>
+    <div class="mt-4">
+      <a href="{{ url_for('auth.login') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">Log In</a>
+    </div>
+  </div>
+{% endif %}
+
+{% if g.user.organization %}  
+  {% if g.user.organization[0] == 'org1' %}
+    <div class="mt-4 p-4 border border-blue-300 bg-blue-50 rounded-lg">
+      <h2 class="text-xl font-bold text-blue-800">Welcome to Organization 1</h2>
+      <p class="text-sm">Here’s a personalized dashboard for your Organization 1.</p>
+    </div>
+  {% elif g.user.organization[0] == 'org2' %}
+    <div class="mt-4 p-4 border border-green-300 bg-green-50 rounded-lg">
+      <h2 class="text-xl font-bold text-green-800">Welcome to Organization 2</h2>
+      <p class="text-sm">Here’s a personalized dashboard for Organization 2.</p>
+    </div>
+  {% else %}
+    <div class="mt-4 p-4 border border-gray-300 bg-gray-50 rounded-lg">
+      <h2 class="text-xl font-bold text-gray-800">Welcome to Secure RH</h2>
+      <p class="text-sm">Please contact your administrator for more details.</p>
+    </div>
+  {% endif %}
+  <!-- Dashboard Cards -->
+  <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Card 1: Users -->
+    <div class="bg-white p-6 rounded-lg shadow-lg border {% if g.user.organization[0] == 'org1' %}border-red-200{% else %}border-blue-200{% endif %}">
+      <h3 class="text-xl font-semibold text-gray-800">Total Users</h3>
+      <p class="text-4xl font-bold {% if g.user.organization[0] == 'org1' %}text-red-600{% else %}text-blue-600{% endif %} mt-2">{{ data['total_users'] }}</p>
+      <p class="text-sm text-gray-500 mt-2">Total active users in the system.</p>
+    </div>
+
+    <!-- Card 2: Tasks -->
+    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-800">Pending Tasks</h3>
+      <p class="text-4xl font-bold text-orange-600 mt-2">{{ data['pending_tasks'] }}</p>
+      <p class="text-sm text-gray-500 mt-2">Tasks awaiting your action.</p>
+    </div>
+
+    <!-- Card 3: Completed Projects -->
+    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-800">Completed Projects</h3>
+      <p class="text-4xl font-bold text-green-600 mt-2">{{ data['completed_projects'] }}</p>
+      <p class="text-sm text-gray-500 mt-2">Projects successfully completed.</p>
+    </div>
+  </div>
+
+  <!-- Fake Graph/Indicator Section -->
+  <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+    {% if g.user.organization[0] == 'org1' %}
+      <!-- Org1: Performance First, then Sales -->
+      <!-- Indicator 1: Performance -->
+      <div class="bg-white p-6 rounded-lg shadow-lg border border-red-200">
+        <h3 class="text-xl font-semibold text-gray-800">Performance</h3>
+        <div class="mt-4">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-500">Progress</span>
+            <span class="text-sm font-semibold text-red-600">{{ data['performance'] }}%</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full mt-2">
+            <div class="h-full bg-red-500 rounded-full" style="width: {{ data['performance'] }}%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fake Graph: Sales -->
+      <div class="bg-white p-6 rounded-lg shadow-lg border border-red-200">
+        <h3 class="text-xl font-semibold text-gray-800">Sales by Region</h3>
+        <div class="mt-4">
+          <!-- Sales Stacked Bar Chart -->
+          <div class="flex flex-col space-y-2">
+            <!-- North Sales -->
+            <div class="flex items-center space-x-2">
+              <span class="w-1/4 text-sm font-medium text-gray-600">North</span>
+              <div class="flex-1 bg-gray-200 h-4 rounded-full">
+                <div class="bg-red-500 h-full rounded-full" style="width: {{ data['sales']['north'] }}%"></div>
+              </div>
+              <span class="text-sm text-gray-600">{{ data['sales']['north'] }}%</span>
+            </div>
+
+            <!-- South Sales -->
+            <div class="flex items-center space-x-2">
+              <span class="w-1/4 text-sm font-medium text-gray-600">South</span>
+              <div class="flex-1 bg-gray-200 h-4 rounded-full">
+                <div class="bg-green-500 h-full rounded-full" style="width: {{ data['sales']['south'] }}%"></div>
+              </div>
+              <span class="text-sm text-gray-600">{{ data['sales']['south'] }}%</span>
+            </div>
+
+            <!-- East Sales -->
+            <div class="flex items-center space-x-2">
+              <span class="w-1/4 text-sm font-medium text-gray-600">East</span>
+              <div class="flex-1 bg-gray-200 h-4 rounded-full">
+                <div class="bg-blue-500 h-full rounded-full" style="width: {{ data['sales']['east'] }}%"></div>
+              </div>
+              <span class="text-sm text-gray-600">{{ data['sales']['east'] }}%</span>
+            </div>
+
+            <!-- West Sales -->
+            <div class="flex items-center space-x-2">
+              <span class="w-1/4 text-sm font-medium text-gray-600">West</span>
+              <div class="flex-1 bg-gray-200 h-4 rounded-full">
+                <div class="bg-yellow-500 h-full rounded-full" style="width: {{ data['sales']['west'] }}%"></div>
+              </div>
+              <span class="text-sm text-gray-600">{{ data['sales']['west'] }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% else %}
+      <!-- Org2: Sales First, then Performance -->
+      <!-- Fake Graph: Sales -->
+      <div class="bg-white p-6 rounded-lg shadow-lg border border-blue-200">
+        <h3 class="text-xl font-semibold text-gray-800">Sales by Region</h3>
+        <div class="mt-4">
+          <!-- Sales Stacked Bar Chart -->
+          <div class="flex flex-col space-y-2">
+            <!-- North Sales -->
+            <div class="flex items-center space-x-2">
+              <span class="w-1/4 text-sm font-medium text-gray-600">North</span>
+              <div class="flex-1 bg-gray-200 h-4 rounded-full">
+                <div class="bg-red-500 h-full rounded-full" style="width: {{ data['sales']['north'] }}%"></div>
+              </div>
+              <span class="text-sm text-gray-600">{{ data['sales']['north'] }}%</span>
+            </div>
+
+            <!-- South Sales -->
+            <div class="flex items-center space-x-2">
+              <span class="w-1/4 text-sm font-medium text-gray-600">South</span>
+              <div class="flex-1 bg-gray-200 h-4 rounded-full">
+                <div class="bg-green-500 h-full rounded-full" style="width: {{ data['sales']['south'] }}%"></div>
+              </div>
+              <span class="text-sm text-gray-600">{{ data['sales']['south'] }}%</span>
+            </div>
+
+            <!-- East Sales -->
+            <div class="flex items-center space-x-2">
+              <span class="w-1/4 text-sm font-medium text-gray-600">East</span>
+              <div class="flex-1 bg-gray-200 h-4 rounded-full">
+                <div class="bg-blue-500 h-full rounded-full" style="width: {{ data['sales']['east'] }}%"></div>
+              </div>
+              <span class="text-sm text-gray-600">{{ data['sales']['east'] }}%</span>
+            </div>
+
+            <!-- West Sales -->
+            <div class="flex items-center space-x-2">
+              <span class="w-1/4 text-sm font-medium text-gray-600">West</span>
+              <div class="flex-1 bg-gray-200 h-4 rounded-full">
+                <div class="bg-yellow-500 h-full rounded-full" style="width: {{ data['sales']['west'] }}%"></div>
+              </div>
+              <span class="text-sm text-gray-600">{{ data['sales']['west'] }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Org2: Project Card -->
+      <div class="bg-white p-6 rounded-lg shadow-lg border border-blue-200">
+        <h3 class="text-xl font-semibold text-gray-800">Project: New Website Launch</h3>
+        <p class="text-sm text-gray-500 mt-2">A new website project aimed at improving the user experience and interface.</p>
+        <div class="mt-4">
+          <!-- Project Status -->
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-500">Status</span>
+            <span class="text-sm font-semibold text-blue-600">In Progress</span>
+          </div>
+        </div>
+
+        <!-- Project Progress Bar -->
+        <div class="h-2 bg-gray-200 rounded-full mt-2">
+          <div class="h-full bg-blue-500 rounded-full" style="width: 55%"></div> <!-- Progress at 55% -->
+        </div>
+        <div class="mt-2 flex justify-between">
+          <span class="text-sm text-gray-500">Progress</span>
+          <span class="text-sm text-gray-600">55%</span>
+        </div>
+
+        <div class="mt-6 flex justify-between items-center">
+          <!-- Deadline -->
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-500">Deadline</span>
+            <span class="text-sm text-gray-600">Feb 28, 2025</span>
+          </div>
+          
+          <!-- View Project Button -->
+          <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">View Project</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 {% endif %}
 {% endblock %}
